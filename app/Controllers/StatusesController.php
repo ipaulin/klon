@@ -73,7 +73,7 @@ class StatusesController extends BaseController
             $offset = $offset * $page;
         }
 
-        $posts = Post::where(['user_id' => $user_id])->orderBy('id');
+        $posts = Post::where(['user_id' => $user_id]);
         $total = $posts->count();
         $posts = $posts->take($limit)->offset($offset)->get()->all();
 
@@ -89,8 +89,7 @@ class StatusesController extends BaseController
 
             $results = [];
             foreach($posts as $post) {
-//                $results[] = $post->getPostDataObject();
-                $results[] = $post->getId();
+                $results[] = $post->getPostDataObject();
             }
 
             $aditional = [
