@@ -1,8 +1,4 @@
 
---
--- Table structure for table `posts`
---
-
 CREATE TABLE `posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `text` text,
@@ -33,7 +29,7 @@ ON UPDATE CASCADE;
 
 CREATE TABLE `user_followers` (
   `user_id` INT(10) unsigned NOT NULL,
-  `user_following_id` INT(10) NOT NULL
+  `user_following_id` INT(10) NOT NULL,
   PRIMARY KEY (`user_id`, `user_following_id`),
   UNIQUE KEY `user_following_id_UNIQUE` (`user_following_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
