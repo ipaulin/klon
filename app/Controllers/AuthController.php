@@ -3,7 +3,7 @@ namespace Controllers;
 
 use Tx\Validator;
 use Illuminate\Http\Request;
-use Twt\TwtSentinelBootstrapper;
+use Klon\KlonSentinelBootstrapper;
 
 
 class AuthController extends BaseController
@@ -13,7 +13,7 @@ class AuthController extends BaseController
 
     public function __construct()
     {
-        $this->sentinel = (new TwtSentinelBootstrapper())->createSentinel();
+        $this->sentinel = (new KlonSentinelBootstrapper())->createSentinel();
     }
 
 
