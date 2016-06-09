@@ -22,3 +22,4 @@ Install dependencies
     composer install
 
 First import db1.sql then db2.sql file into your MySQL database
+Set DB configuration in app/config/database_config.php file.
