@@ -139,12 +139,12 @@ class UserController extends BaseController
     public function searchAction($query = null, $limit = 0, $offset = 0)
     {
         if($query) {
-            $users = User::where(['display_name' => $query]);
+            $users = User::where(['display_name' => $query])->get()->all();
 
             if($users) {
                 $results = [];
 
-                foreach($users->get() as $user) {
+                foreach($users as $user) {
                     $results[] = $user->getSmallUserObject();
                 }
 
