@@ -64,15 +64,33 @@ class StatusesController extends BaseController
      */
     public function getUserStatusesAction(RouteCollection $route, Request $request, $user_id, $limit, $offset, $page = 1)
     {
-        $posts = Post::where(['user_id' => $user_id]);
+
+        $offset_or = $offset;
+
+        if($offset < 1 && $page > 1) {
+            $offset = ($limit * $page) - $limit;
+        } elseif ($page > 1) {
+            $offset = $offset * $page;
+        }
+
+        $posts = Post::where(['user_id' => $user_id])->orderBy('id');
         $total = $posts->count();
         $posts = $posts->take($limit)->offset($offset)->get()->all();
 
         if($posts) {
             $url = new UrlGenerator($route, $request);
+
+            $next_page = floor(($total - $offset_or) / $limit);
+            $next_page = $page < $next_page ? $page + 1 : null;
+            $next_link = $next_page != null ? $url->to('statuses/user-timeline/', ['user_id' => $user_id, 'limit' => $limit, 'offset' => $offset, 'page' => $next_page]) : $next_page;
+
+            $prev_page = $page > 1 ? $page - 1: null;
+            $prev_link = $prev_page != null ? $url->to('statuses/user-timeline/', ['user_id' => $user_id, 'limit' => $limit, 'offset' => $offset, 'page' => $prev_page]) : $prev_page;
+
             $results = [];
             foreach($posts as $post) {
-                $results[] = $post->getPostDataObject();
+//                $results[] = $post->getPostDataObject();
+                $results[] = $post->getId();
             }
 
             $aditional = [
@@ -81,8 +99,8 @@ class StatusesController extends BaseController
                 'results' => $results,
                 'links' => [
                     'self' => $url->current(),
-                    'next' => '' ,
-                    'prev' => '',
+                    'next' => $next_link,
+                    'prev' => $prev_link,
                 ],
                 'total' => $total
             ];
@@ -100,11 +118,18 @@ class StatusesController extends BaseController
      * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function getStatusesHomeAction(RouteCollection $route, Request $request)
+    public function getStatusesHomeAction(RouteCollection $route, Request $request, $limit, $offset, $page = 1)
     {
-        $posts = Post::all();
+        $offset_or = $offset;
+
+        if($offset < 1 && $page > 1) {
+            $offset = ($limit * $page) - $limit;
+        } elseif ($page > 1) {
+            $offset = $offset * $page;
+        }
+        $posts = new Post();
         $total = $posts->count();
-        $url = new UrlGenerator($route, $request);
+        $posts = $posts->take($limit)->offset($offset)->get()->all();
 
         $results = [];
         foreach($posts as $post) {
@@ -112,12 +137,20 @@ class StatusesController extends BaseController
         }
 
         if($posts) {
+            $url = new UrlGenerator($route, $request);
+            $next_page = floor(($total - $offset_or) / $limit);
+            $next_page = $page < $next_page ? $page + 1 : null;
+            $next_link = $next_page != null ? $url->to('statuses/home/', ['limit' => $limit, 'offset' => $offset, 'page' => $next_page]) : $next_page;
+
+            $prev_page = $page > 1 ? $page - 1: null;
+            $prev_link = $prev_page != null ? $url->to('statuses/home/', ['limit' => $limit, 'offset' => $offset, 'page' => $prev_page]) : $prev_page;
+
             $aditional = [
                 'results' => $results,
                 'links' => [
                     'self' => $url->current(),
-                    'next' => '' ,
-                    'prev' => '',
+                    'next' => $next_link,
+                    'prev' => $prev_link,
                 ],
                 'total' => $total
             ];
